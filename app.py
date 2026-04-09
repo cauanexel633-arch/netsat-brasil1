@@ -4,72 +4,92 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# 🔥 GARANTIR PASTAS (IMPORTANTE PRO RENDER)
+os.makedirs("dados", exist_ok=True)
+os.makedirs("paginas", exist_ok=True)
+
 # 📊 salvar visita
 def salvar_visita():
-    with open("dados/visitas.txt", "a") as f:
+    with open("dados/visitas.txt", "a", encoding="utf-8") as f:
         f.write(f"{datetime.now()}\n")
 
 # 📊 salvar clique
 def salvar_clique(tipo):
-    with open("dados/cliques.txt", "a") as f:
+    with open("dados/cliques.txt", "a", encoding="utf-8") as f:
         f.write(f"{tipo} - {datetime.now()}\n")
 
 # 📁 carregar páginas
 def carregar_paginas():
     paginas = []
 
-    for pasta in os.listdir("paginas"):
+    try:
+        pastas = os.listdir("paginas")
+    except:
+        pastas = []
+
+    for pasta in pastas:
         caminho = os.path.join("paginas", pasta)
 
         if os.path.isdir(caminho):
+
             def ler(arq):
                 try:
-                    return open(os.path.join(caminho, arq), encoding="utf-8").read()
+                    with open(os.path.join(caminho, arq), encoding="utf-8") as f:
+                        return f.read().strip()
                 except:
                     return ""
 
+            # 🔹 itens do menu
             itens = []
             for i in range(1, 10):
                 nome = f"{i}_item_menu.txt"
                 if os.path.exists(os.path.join(caminho, nome)):
                     itens.append(ler(nome))
 
+            # 🔹 valores
             valores = ler("subvalor.txt").split(",")
 
             paginas.append({
                 "itens": itens,
                 "titulo": ler("titulo.txt"),
                 "subtitulo": ler("subtitulo.txt"),
-                "valor": valores[0],
+                "valor": valores[0] if len(valores) > 0 else "",
                 "valor_antigo": valores[1] if len(valores) > 1 else "",
                 "botao": ler("botao.txt")
             })
 
     return paginas
 
-# 🌍 site
+# 🌍 SITE PRINCIPAL
 @app.route('/')
 def home():
     salvar_visita()
     paginas = carregar_paginas()
     return render_template("site.html", paginas=paginas)
 
-# 💬 contato
-@app.route('/contato', methods=['POST'])
+# 💬 CONTATO (FORMULÁRIO)
+@app.route('/contato', methods=['GET', 'POST'])
 def contato():
-    nome = request.form.get("nome")
-    mensagem = request.form.get("mensagem")
+    if request.method == 'POST':
+        nome = request.form.get("nome")
+        mensagem = request.form.get("mensagem")
 
-    with open("dados/contatos.txt", "a") as f:
-        f.write(f"{nome} - {mensagem}\n")
+        with open("dados/contatos.txt", "a", encoding="utf-8") as f:
+            f.write(f"{nome} - {mensagem}\n")
 
-    salvar_clique("contato")
-    return "Mensagem enviada!"
+        salvar_clique("contato")
 
-# 💰 clique comprar
+        return "Mensagem enviada com sucesso! 👍"
+
+    return render_template("contato.html")
+
+# 💰 CLIQUE COMPRAR
 @app.route('/comprar')
 def comprar():
     salvar_clique("comprar")
     return "Redirecionando..."
 
-app.run(host="0.0.0.0", port=5000)
+# 🚀 RENDER (OBRIGATÓRIO)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
