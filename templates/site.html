@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; background:#0f172a; color:white; }
+.card { background:#1e293b; padding:20px; margin:20px; border-radius:10px; }
+button { margin:5px; padding:10px; }
+</style>
+</head>
+<body>
+
+<h1>Planos</h1>
+
+{% for p in paginas %}
+<div class="card">
+
+    <h2>{{ p.titulo }}</h2>
+
+    {% for item in p.itens %}
+        <button>{{ item }}</button>
+    {% endfor %}
+
+    <p>{{ p.subtitulo }}</p>
+
+    <h3>{{ p.valor }}</h3>
+    {% if p.valor_antigo %}
+        <s>{{ p.valor_antigo }}</s>
+    {% endif %}
+
+    <a href="/comprar">COMPRAR</a>
+
+</div>
+{% endfor %}
+
+<form action="/contato" method="post">
+    <input name="nome" placeholder="Nome">
+    <input name="mensagem" placeholder="Mensagem">
+    <button>Enviar</button>
+</form>
+
+</body>
+</html>
