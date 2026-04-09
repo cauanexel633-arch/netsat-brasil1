@@ -10,7 +10,7 @@
 body {
     margin: 0;
     font-family: Arial;
-    background: #020617;
+    background: linear-gradient(180deg, #020617, #0f172a);
     color: white;
 }
 
@@ -32,28 +32,55 @@ body {
     padding: 25px;
     border-radius: 20px;
     margin-bottom: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 .valor {
-    font-size: 40px;
+    margin-top: 10px;
+}
+
+.moeda {
+    font-size: 18px;
+}
+
+.numero {
+    font-size: 42px;
+    font-weight: bold;
     color: #22c55e;
+}
+
+.mes {
+    font-size: 16px;
+    color: #94a3b8;
+    margin-left: 5px;
 }
 
 .antigo {
     text-decoration: line-through;
     color: red;
+    font-size: 16px;
 }
 
 .botao {
     display: block;
-    background: #22c55e;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
     padding: 12px;
     text-align: center;
     border-radius: 10px;
     text-decoration: none;
     color: black;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 15px;
+}
+
+.whatsapp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25D366;
+    padding: 15px;
+    border-radius: 50%;
+    text-decoration: none;
 }
 </style>
 </head>
@@ -65,17 +92,28 @@ body {
 <div class="container">
 
 {% for p in paginas %}
+
+{% set partes = p.valor.split('/') %}
+
 <div class="card">
 
 <h2>{{ p.titulo }}</h2>
 <p>{{ p.subtitulo }}</p>
 
 <div class="valor">
-{{ p.valor }}
-{% if p.valor_antigo %}
-<span class="antigo">{{ p.valor_antigo }}</span>
-{% endif %}
+    <span class="moeda">R$</span>
+    <span class="numero">
+        {{ partes[0].replace('R$', '').split(',')[0] }}
+    </span>
+
+    {% if partes|length > 1 %}
+        <span class="mes">/{{ partes[1] }}</span>
+    {% endif %}
 </div>
+
+{% if p.valor_antigo %}
+<p class="antigo">{{ p.valor_antigo }}</p>
+{% endif %}
 
 <ul>
 {% for item in p.itens %}
@@ -83,12 +121,15 @@ body {
 {% endfor %}
 </ul>
 
-<a href="{{ p.botao }}" class="botao">Contratar</a>
+<a href="{{ p.botao }}" class="botao">Contratar Agora</a>
 
 </div>
+
 {% endfor %}
 
 </div>
+
+<a href="/contato" class="whatsapp">💬</a>
 
 </body>
 </html>

@@ -34,26 +34,24 @@ def carregar_paginas():
                 if os.path.exists(os.path.join(caminho, arq)):
                     itens.append(ler(arq))
 
-            valores = ler("subvalor.txt").split(",")
+            valor = ler("subvalor.txt")
 
             paginas.append({
                 "titulo": ler("titulo.txt"),
                 "subtitulo": ler("subtitulo.txt"),
-                "valor": valores[0] if valores else "",
-                "valor_antigo": valores[1] if len(valores) > 1 else "",
+                "valor": valor,
+                "valor_antigo": valor.split(",")[1] if "," in valor else "",
                 "botao": ler("botao.txt"),
                 "itens": itens
             })
 
     return paginas
 
-# site
 @app.route("/")
 def home():
     salvar("visitas.txt", str(datetime.now()))
     return render_template("site.html", paginas=carregar_paginas())
 
-# contato
 @app.route("/contato", methods=["POST"])
 def contato():
     nome = request.form.get("nome")
@@ -64,7 +62,6 @@ def contato():
 
     return "Mensagem enviada!"
 
-# comprar
 @app.route("/comprar")
 def comprar():
     salvar("cliques.txt", f"comprar | {datetime.now()}")
