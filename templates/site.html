@@ -1,43 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetSat Brasil</title>
+
 <style>
-body { font-family: Arial; background:#0f172a; color:white; }
-.card { background:#1e293b; padding:20px; margin:20px; border-radius:10px; }
-button { margin:5px; padding:10px; }
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.titulo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.subtitulo {
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+.valor {
+    font-size: 28px;
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.valor-antigo {
+    text-decoration: line-through;
+    color: #ef4444;
+}
+
+.lista {
+    margin-top: 10px;
+}
+
+.lista li {
+    margin-bottom: 5px;
+}
+
+.botao {
+    display: block;
+    margin-top: 15px;
+    padding: 10px;
+    text-align: center;
+    background: #22c55e;
+    color: black;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+}
 </style>
+
 </head>
 <body>
 
-<h1>Planos</h1>
+<div class="container">
 
-{% for p in paginas %}
-<div class="card">
+    {% for p in paginas %}
+    <div class="card">
 
-    <h2>{{ p.titulo }}</h2>
+        <div class="titulo">{{ p.titulo }}</div>
+        <div class="subtitulo">{{ p.subtitulo }}</div>
 
-    {% for item in p.itens %}
-        <button>{{ item }}</button>
+        <div class="valor">
+            {{ p.valor }}
+            {% if p.valor_antigo %}
+            <span class="valor-antigo">{{ p.valor_antigo }}</span>
+            {% endif %}
+        </div>
+
+        <ul class="lista">
+            {% for item in p.itens %}
+            <li>✔ {{ item }}</li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ p.botao }}" class="botao">Comprar</a>
+
+    </div>
     {% endfor %}
 
-    <p>{{ p.subtitulo }}</p>
-
-    <h3>{{ p.valor }}</h3>
-    {% if p.valor_antigo %}
-        <s>{{ p.valor_antigo }}</s>
-    {% endif %}
-
-    <a href="/comprar">COMPRAR</a>
-
 </div>
-{% endfor %}
-
-<form action="/contato" method="post">
-    <input name="nome" placeholder="Nome">
-    <input name="mensagem" placeholder="Mensagem">
-    <button>Enviar</button>
-</form>
 
 </body>
 </html>
