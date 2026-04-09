@@ -3,98 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>NetSat Brasil</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    background: #0f172a;
+    background: #020617;
     color: white;
 }
 
+.header {
+    text-align: center;
+    padding: 30px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
 .container {
+    max-width: 900px;
+    margin: auto;
     padding: 20px;
 }
 
 .card {
-    background: #1e293b;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.4);
-}
-
-.titulo {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.subtitulo {
-    color: #94a3b8;
-    margin-bottom: 10px;
+    background: #0f172a;
+    padding: 25px;
+    border-radius: 20px;
+    margin-bottom: 30px;
 }
 
 .valor {
-    font-size: 28px;
+    font-size: 40px;
     color: #22c55e;
-    font-weight: bold;
 }
 
-.valor-antigo {
+.antigo {
     text-decoration: line-through;
-    color: #ef4444;
-}
-
-.lista {
-    margin-top: 10px;
-}
-
-.lista li {
-    margin-bottom: 5px;
+    color: red;
 }
 
 .botao {
     display: block;
-    margin-top: 15px;
-    padding: 10px;
-    text-align: center;
     background: #22c55e;
-    color: black;
-    text-decoration: none;
+    padding: 12px;
+    text-align: center;
     border-radius: 10px;
+    text-decoration: none;
+    color: black;
     font-weight: bold;
+    margin-top: 10px;
 }
 </style>
-
 </head>
+
 <body>
+
+<div class="header">NetSat Brasil 🚀</div>
 
 <div class="container">
 
-    {% for p in paginas %}
-    <div class="card">
+{% for p in paginas %}
+<div class="card">
 
-        <div class="titulo">{{ p.titulo }}</div>
-        <div class="subtitulo">{{ p.subtitulo }}</div>
+<h2>{{ p.titulo }}</h2>
+<p>{{ p.subtitulo }}</p>
 
-        <div class="valor">
-            {{ p.valor }}
-            {% if p.valor_antigo %}
-            <span class="valor-antigo">{{ p.valor_antigo }}</span>
-            {% endif %}
-        </div>
+<div class="valor">
+{{ p.valor }}
+{% if p.valor_antigo %}
+<span class="antigo">{{ p.valor_antigo }}</span>
+{% endif %}
+</div>
 
-        <ul class="lista">
-            {% for item in p.itens %}
-            <li>✔ {{ item }}</li>
-            {% endfor %}
-        </ul>
+<ul>
+{% for item in p.itens %}
+<li>✔ {{ item }}</li>
+{% endfor %}
+</ul>
 
-        <a href="{{ p.botao }}" class="botao">Comprar</a>
+<a href="{{ p.botao }}" class="botao">Contratar</a>
 
-    </div>
-    {% endfor %}
+</div>
+{% endfor %}
 
 </div>
 
