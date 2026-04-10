@@ -1,17 +1,23 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import os
 from datetime import datetime
 
 app = Flask(__name__)
 
-# garantir pastas
 os.makedirs("dados", exist_ok=True)
 os.makedirs("paginas", exist_ok=True)
 
-# salvar dados
-def salvar(nome_arquivo, texto):
-    with open(f"dados/{nome_arquivo}", "a", encoding="utf-8") as f:
-        f.write(texto + "\n")
+# salvar
+def salvar(arq, txt):
+    with open(f"dados/{arq}", "a", encoding="utf-8") as f:
+        f.write(txt + "\n")
+
+# contar
+def contar(nome):
+    try:
+        return len(open(f"dados/{nome}").readlines())
+    except:
+        return 0
 
 # carregar páginas
 def carregar_paginas():
@@ -40,34 +46,49 @@ def carregar_paginas():
                 "titulo": ler("titulo.txt"),
                 "subtitulo": ler("subtitulo.txt"),
                 "valor": valor,
-                "valor_antigo": valor.split(",")[1] if "," in valor else "",
                 "botao": ler("botao.txt"),
-                "itens": itens
+                "itens": itens,
+                "destaque": ler("destaque.txt")
             })
 
     return paginas
 
+# SITE
 @app.route("/")
 def home():
     salvar("visitas.txt", str(datetime.now()))
     return render_template("site.html", paginas=carregar_paginas())
 
-@app.route("/contato", methods=["POST"])
+# CONTATO
+@app.route("/contato", methods=["GET", "POST"])
 def contato():
-    nome = request.form.get("nome")
-    msg = request.form.get("mensagem")
+    if request.method == "POST":
+        nome = request.form.get("nome")
+        msg = request.form.get("mensagem")
 
-    salvar("contatos.txt", f"{nome} | {msg}")
-    salvar("cliques.txt", f"contato | {datetime.now()}")
+        salvar("contatos.txt", f"{nome} | {msg}")
+        salvar("cliques.txt", "contato")
 
-    return "Mensagem enviada!"
+        return "Mensagem enviada!"
+    
+    return render_template("contato.html")
 
+# ADMIN
+@app.route("/admin")
+def admin():
+    return render_template("admin.html",
+        visitas=contar("visitas.txt"),
+        cliques=contar("cliques.txt"),
+        contatos=contar("contatos.txt")
+    )
+
+# COMPRAR
 @app.route("/comprar")
 def comprar():
-    salvar("cliques.txt", f"comprar | {datetime.now()}")
-    return "ok"
+    salvar("cliques.txt", "comprar")
+    return redirect("/")
 
-# render
+# RENDER
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
