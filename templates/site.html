@@ -2,41 +2,116 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body {background:#020617;color:white;font-family:Arial;margin:0}
-.container {max-width:900px;margin:auto;padding:20px}
-.card {background:#0f172a;padding:20px;border-radius:15px;margin-bottom:20px}
-.destaque {border:2px solid #22c55e}
-.numero {font-size:40px;color:#22c55e}
-.botao {background:#22c55e;color:black;padding:10px;display:block;text-align:center;border-radius:10px;text-decoration:none}
+
+.container {
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+.card {
+    background:#0f172a;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+.destaque {
+    border:2px solid #22c55e;
+}
+
+/* PREÇO PROFISSIONAL */
+.valor-box {
+    margin-top:10px;
+}
+
+.linha-preco {
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.numero {
+    font-size:42px;
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.mes {
+    font-size:16px;
+    color:#94a3b8;
+}
+
+.preco-antigo {
+    color:#ef4444;
+    text-decoration:line-through;
+    font-size:16px;
+    margin-top:3px;
+}
+
+.botao {
+    background:#22c55e;
+    color:black;
+    padding:10px;
+    display:block;
+    text-align:center;
+    border-radius:10px;
+    text-decoration:none;
+    margin-top:10px;
+}
 </style>
+
 </head>
 <body>
 
 <div class="container">
 
 {% for p in paginas %}
-{% set partes = p.valor.split('/') %}
+
+{% set valores = p.valor.split(',') %}
+{% set atual = valores[0] %}
+{% set antigo = valores[1] if valores|length > 1 else '' %}
+
+{% set partes = atual.split('/') %}
 
 <div class="card {% if p.destaque == 'sim' %}destaque{% endif %}">
 
 <h2>{{ p.titulo }}</h2>
 <p>{{ p.subtitulo }}</p>
 
-<div class="numero">
-{{ partes[0] }}
-{% if partes|length > 1 %}/{{ partes[1] }}{% endif %}
+<div class="valor-box">
+
+    <div class="linha-preco">
+        <span class="numero">
+            {{ partes[0].replace('R$', '') }}
+        </span>
+
+        {% if partes|length > 1 %}
+        <span class="mes">/{{ partes[1] }}</span>
+        {% endif %}
+    </div>
+
+    {% if antigo %}
+    <div class="preco-antigo">
+        {{ antigo }}
+    </div>
+    {% endif %}
+
 </div>
 
 <ul>
 {% for item in p.itens %}
-<li>{{ item }}</li>
+<li>✔ {{ item }}</li>
 {% endfor %}
 </ul>
 
 <a href="{{ p.botao }}" class="botao">Contratar</a>
 
 </div>
+
 {% endfor %}
 
 </div>
